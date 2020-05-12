@@ -7,7 +7,8 @@ See issues directory individual issues.
 | Status | Name                              | Issue Link                                            |
 |--------|-----------------------------------|-------------------------------------------------------|
 | Open   | duplicate-response-inspector-call | https://github.com/Azure/azure-sdk-for-go/issues/9221 |
+| Open   | webtest-locations-json-error      | TBC                                                   |
 |        |                                   |                                                       |
-|        |                                   |                                                       |
+
 
 
