@@ -1,4 +1,4 @@
-module github.com/ppanyukov/AzureDuplicateResponder
+module github.com/ppanyukov/azure-sdk-for-go-issues
 
 go 1.14
 
