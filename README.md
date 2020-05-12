@@ -1,22 +1,13 @@
-# AzureDuplicateResponder
+# azure-sdk-for-go-issues
 
-This is a repro for an issue which calls response inspector twice in Azure SDK for Go.
+Sample programs reproducing and demonstrating issues found in Azure SDK for Go: https://github.com/Azure/azure-sdk-for-go
 
-It follows the "Writing Custom Request/Response Inspectors" example here: https://github.com/Azure/azure-sdk-for-go#writing-custom-requestresponse-inspectors
+See issues directory individual issues.
 
-To run
+| Status | Name                              | Issue Link                                            |
+|--------|-----------------------------------|-------------------------------------------------------|
+| Open   | duplicate-response-inspector-call | https://github.com/Azure/azure-sdk-for-go/issues/9221 |
+|        |                                   |                                                       |
+|        |                                   |                                                       |
 
-```
-export AZURE_SUBSCRIPTION_ID="YOUR_SUB_ID"
-go run ./main.go
-```
 
-Output is like this:
-
-```
-2020/05/11 17:43:44 ResponderFunc is called   <== once
-2020/05/11 17:43:44 ResponderFunc is called   <== twice
-2020/05/11 17:43:44 Got Subscription: YOUR_SUB_NAME
-```
-
-It looks like both autorest *and* Azure SDK for Go call the inspector thus resulting in duplication.

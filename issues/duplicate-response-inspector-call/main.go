@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,35 +11,45 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/resources/mgmt/subscriptions"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
-	"github.com/Azure/go-autorest/autorest/to"
+	"github.com/pkg/errors"
 )
 
 func main() {
-	subID := os.Getenv("AZURE_SUBSCRIPTION_ID")
+	subID := os.Getenv(auth.SubscriptionID)
 	if subID == "" {
-		CheckErr(errors.New("env var AZURE_SUBSCRIPTION_ID is not defined"))
+		CheckErr(errors.Errorf("env var %s is not defined", auth.SubscriptionID))
 	}
 
 	authoriser, err := auth.NewAuthorizerFromCLI()
 	CheckErr(err)
 
+	const wantCounter = 1
+	gotCounter := 0
+
 	ctx := context.TODO()
 	subClient := subscriptions.NewClient()
 	subClient.Authorizer = authoriser
-	subClient.ResponseInspector = LogResponse()
-	result, err := subClient.Get(ctx, subID)
+	subClient.ResponseInspector = LogResponse(&gotCounter)
+	_, err = subClient.Get(ctx, subID)
 	CheckErr(err)
 
-	log.Printf("Got Subscription: %s\n", to.String(result.DisplayName))
+	if gotCounter == wantCounter {
+		log.Printf("PASS: bug fixed")
+	} else {
+		log.Printf("BUG: duplicate-response-inspector-call\n")
+		log.Printf("  - Want: %d\n", wantCounter)
+		log.Printf("  - Got : %d\n", gotCounter)
+		log.Fatalf("BOOM\n")
+	}
 }
 
-func LogResponse() autorest.RespondDecorator {
+func LogResponse(counter *int) autorest.RespondDecorator {
 	return func(p autorest.Responder) autorest.Responder {
 		return autorest.ResponderFunc(func(r *http.Response) error {
 			err := p.Respond(r)
 			CheckErr(err)
 			//BUG: this responder will be called twice.
-			log.Printf("ResponderFunc is called")
+			*counter++
 			return err
 		})
 	}
