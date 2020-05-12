@@ -13,6 +13,7 @@ go run ./main.go
 
 Output is like this:
 
+```
 2020/05/12 11:58:40 BUG: duplicate-response-inspector-call
 2020/05/12 11:58:40   - Want: 1
 2020/05/12 11:58:40   - Got : 2
